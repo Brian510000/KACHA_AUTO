@@ -166,7 +166,7 @@ class MinimalApp:
 
     def run_nikke(self):
         """NIKKE脚本"""
-        print("运行：NIKKE 脚本")
+        _run_generic("nikke", "NIKKE", "NikkeAuto.py")
 
     # ========== ↑↑↑ 功能函数写这里 ↑↑↑ ==========
 

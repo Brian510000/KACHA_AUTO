@@ -20,9 +20,6 @@ MAX_RETRY = 30  # 不建议无限重试
 CHECK_MAX_TIMES = 10  # 验证图片最大重试次数
 CHECK_INTERVAL = 1    # 验证图片查找间隔(秒)
 
-hwnd = function.get_target_window_hwnd("Notepad")
-
-
+hwnd = function.get_target_window_hwnd("NIKKE")
 function.force_foreground_window(hwnd)
-
-
+win32gui.SetWindowPos(hwnd, -1, 0, 0, 0, 0, 0x0001)

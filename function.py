@@ -11,7 +11,6 @@ import os
 import sys
 import json
 
-
 # ========== 全局初始化（解决Windows缩放偏移） ==========
 ctypes.windll.user32.SetProcessDpiAwarenessContext(-4)
 pyautogui.PAUSE = 0.2  # 操作间隔，防操作过快
@@ -61,6 +60,20 @@ def save_path(key: str, path: str) -> bool:
         return False
 # ========== 窗口工具 ==========
 
+
+def resource_path(path):
+    """
+    获取资源文件路径
+    兼容：
+    1. Python源码运行
+    2. PyInstaller打包exe运行
+    """
+    if getattr(sys, "frozen", False):
+        # exe运行
+        return os.path.join(sys._MEIPASS, path)
+
+    # 源码运行
+    return path
 
 @retry(exceptions=OSError, delay=1, tries=120)
 def get_target_window_hwnd(window_keyword: str):
@@ -131,9 +144,12 @@ region = SCAN_REGION = (0, 0, 800, 600)
 #这是窗口的找图,限定了该窗口
 @retry(exceptions=pyautogui.ImageNotFoundException, delay=RETRY_DELAY, tries=MAX_RETRY)
 def window_click_pic(pic_path: str, hwnd: int):
+    # 关键修改：将原始路径转换为兼容 exe 的路径
+    full_path = resource_path(pic_path)
+
     region = get_window_region(hwnd)
     locate_pos = pyautogui.locateOnScreen(
-        pic_path,
+        full_path,           # 使用转换后的路径
         confidence=IMG_CONFIDENCE,
         region=region
     )
@@ -145,9 +161,13 @@ def window_click_pic(pic_path: str, hwnd: int):
 #这是全屏找图,可以使用region来优化性能
 @retry(exceptions=pyautogui.ImageNotFoundException, delay=RETRY_DELAY, tries=MAX_RETRY)
 def click_pic(pic_path: str):
-    """找到图片 → 移动到图片中心 → 点击"""
+    """
+    找到图片 → 移动到图片中心 → 点击（全屏查找）
+    """
+    full_path = resource_path(pic_path)  # 统一转换路径
+
     locate_pos = pyautogui.locateOnScreen(
-        pic_path,
+        full_path,                       # 使用转换后的路径
         confidence=IMG_CONFIDENCE,
     )
     cx, cy = pyautogui.center(locate_pos)
@@ -158,8 +178,9 @@ def click_pic(pic_path: str):
 @retry(exceptions=pyautogui.ImageNotFoundException, delay=RETRY_DELAY, tries=MAX_RETRY)
 def find_pic_and_move(pic_path: str, x_abs: int, y_abs: int):
     """找到图片 → 移动到指定绝对坐标 → 点击"""
+    full_path = resource_path(pic_path)  # 新增：路径转换
     pyautogui.locateOnScreen(
-        pic_path,
+        full_path,                       # 改为 full_path
         confidence=IMG_CONFIDENCE,
     )
     pydirectinput.moveTo(x_abs, y_abs)
@@ -173,9 +194,10 @@ def pic_operate_with_check(main_pic: str, check_pic: str):
     2. 等待1秒，循环10次查找验证图片
     3. 找到验证图片则结束；10次未找到，重新执行整个流程
     """
+    check_full_path = resource_path(check_pic)  # 新增：提前转换验证图路径
     while True:
         # 第一步：查找并点击主图片
-        click_pic(main_pic)
+        click_pic(main_pic)   # click_pic 内部已调用 resource_path
         # 等待1秒
         sleep(1)
 
@@ -183,7 +205,8 @@ def pic_operate_with_check(main_pic: str, check_pic: str):
         check_success = False
         for _ in range(CHECK_MAX_TIMES):
             try:
-                pyautogui.locateOnScreen(check_pic, confidence=IMG_CONFIDENCE)
+                pyautogui.locateOnScreen(
+                    check_full_path, confidence=IMG_CONFIDENCE)  # 改为 check_full_path
                 check_success = True
                 break
             except pyautogui.ImageNotFoundException:
@@ -207,9 +230,10 @@ def pic_operate_with_check_with_success_sleep(main_pic: str, check_pic: str, suc
     :param check_pic: 用于验证的图片路径
     :param success_sleep: 验证成功后等待的秒数，默认 1.0
     """
+    check_full_path = resource_path(check_pic)  # 新增：路径转换
     while True:
         # 第一步：查找并点击主图片
-        click_pic(main_pic)
+        click_pic(main_pic)   # click_pic 内部已调用 resource_path
         # 等待1秒
         sleep(1)
 
@@ -217,7 +241,8 @@ def pic_operate_with_check_with_success_sleep(main_pic: str, check_pic: str, suc
         check_success = False
         for _ in range(CHECK_MAX_TIMES):
             try:
-                pyautogui.locateOnScreen(check_pic, confidence=IMG_CONFIDENCE)
+                pyautogui.locateOnScreen(
+                    check_full_path, confidence=IMG_CONFIDENCE)  # 改为 check_full_path
                 check_success = True
                 break
             except pyautogui.ImageNotFoundException:
@@ -239,6 +264,9 @@ def window_pic_operate_with_check(main_pic: str, check_pic: str, hwnd: int = Non
     3. 找到验证图片则结束；10次未找到，重新执行整个流程
     :param hwnd: 窗口句柄，若为None则全屏查找
     """
+    main_full_path = resource_path(main_pic)   # 新增：主图片路径转换
+    check_full_path = resource_path(check_pic)  # 新增：验证图片路径转换
+
     # 根据 hwnd 获取区域
     region = get_window_region(hwnd) if hwnd is not None else None
 
@@ -246,7 +274,7 @@ def window_pic_operate_with_check(main_pic: str, check_pic: str, hwnd: int = Non
         # 第一步：在区域内查找并点击主图片
         try:
             pos = pyautogui.locateCenterOnScreen(
-                main_pic, confidence=IMG_CONFIDENCE, region=region)
+                main_full_path, confidence=IMG_CONFIDENCE, region=region)  # 改为 main_full_path
             if pos is None:
                 # 如果没找到主图片，可能区域不对，重试或报错
                 # 这里简单处理，等待后继续外层循环
@@ -267,7 +295,7 @@ def window_pic_operate_with_check(main_pic: str, check_pic: str, hwnd: int = Non
         for _ in range(CHECK_MAX_TIMES):
             try:
                 pyautogui.locateOnScreen(
-                    check_pic, confidence=IMG_CONFIDENCE, region=region)
+                    check_full_path, confidence=IMG_CONFIDENCE, region=region)  # 改为 check_full_path
                 check_success = True
                 break
             except pyautogui.ImageNotFoundException:
@@ -277,6 +305,7 @@ def window_pic_operate_with_check(main_pic: str, check_pic: str, hwnd: int = Non
             print(f"验证图片【{check_pic}】找到，操作成功！")
             break
 
+
 # 新增函数：点击图片中心偏移位置 + 校验重试
 def pic_click_offset_with_check(main_pic: str, offset_x: int, offset_y: int, check_pic: str):
     """
@@ -285,11 +314,15 @@ def pic_click_offset_with_check(main_pic: str, offset_x: int, offset_y: int, che
     2. 等待1秒，循环10次查找验证图片
     3. 找到验证图片则结束；10次未找到，重新执行整个流程
     """
+    main_full_path = resource_path(main_pic)   # 新增：主图片路径转换
+    check_full_path = resource_path(check_pic)  # 新增：验证图片路径转换
+
     while True:
         # 1. 查找主图，并点击中心偏移位置
         @retry(exceptions=pyautogui.ImageNotFoundException, delay=RETRY_DELAY, tries=MAX_RETRY)
         def find_and_click_offset():
-            pos = pyautogui.locateOnScreen(main_pic, confidence=IMG_CONFIDENCE)
+            pos = pyautogui.locateOnScreen(
+                main_full_path, confidence=IMG_CONFIDENCE)  # 改为 main_full_path
             center_x, center_y = pyautogui.center(pos)
             # 计算偏移后坐标
             target_x = center_x + offset_x
@@ -304,11 +337,12 @@ def pic_click_offset_with_check(main_pic: str, offset_x: int, offset_y: int, che
         check_ok = False
         for _ in range(CHECK_MAX_TIMES):
             try:
-                pyautogui.locateOnScreen(check_pic, confidence=IMG_CONFIDENCE)
+                pyautogui.locateOnScreen(
+                    check_full_path, confidence=IMG_CONFIDENCE)  # 改为 check_full_path
                 check_ok = True
                 break
             except pyautogui.ImageNotFoundException:
-                time.sleep(CHECK_INTERVAL)
+                sleep(CHECK_INTERVAL)
 
         # 校验通过则退出，不通过则重新走完整流程
         if check_ok:
@@ -323,11 +357,15 @@ def pic_click_abs_with_check(main_pic: str, x_abs: int, y_abs: int, check_pic: s
     2. 等待1秒，循环10次查找验证图片
     3. 找到验证图片则结束；10次未找到，重新执行整个流程
     """
+    main_full_path = resource_path(main_pic)   # 新增：主图片路径转换
+    check_full_path = resource_path(check_pic)  # 新增：验证图片路径转换
+
     while True:
         # 找到主图，点击指定绝对坐标
         @retry(exceptions=pyautogui.ImageNotFoundException, delay=RETRY_DELAY, tries=MAX_RETRY)
         def find_and_click_abs():
-            pyautogui.locateOnScreen(main_pic, confidence=IMG_CONFIDENCE)
+            pyautogui.locateOnScreen(
+                main_full_path, confidence=IMG_CONFIDENCE)  # 改为 main_full_path
             pydirectinput.moveTo(x_abs, y_abs)
             pydirectinput.click()
 
@@ -338,7 +376,8 @@ def pic_click_abs_with_check(main_pic: str, x_abs: int, y_abs: int, check_pic: s
         check_success = False
         for _ in range(CHECK_MAX_TIMES):
             try:
-                pyautogui.locateOnScreen(check_pic, confidence=IMG_CONFIDENCE)
+                pyautogui.locateOnScreen(
+                    check_full_path, confidence=IMG_CONFIDENCE)  # 改为 check_full_path
                 check_success = True
                 break
             except pyautogui.ImageNotFoundException:
@@ -356,6 +395,8 @@ def click_abs_with_check(x_abs: int, y_abs: int, check_pic: str):
     2. 等待1秒，循环10次查找验证图片
     3. 找到验证图片则结束；10次未找到，重新执行整个流程
     """
+    check_full_path = resource_path(check_pic)  # 新增：验证图片路径转换
+
     while True:
         # 直接移动并点击指定绝对坐标
         pydirectinput.moveTo(x_abs, y_abs)
@@ -366,7 +407,8 @@ def click_abs_with_check(x_abs: int, y_abs: int, check_pic: str):
         check_success = False
         for _ in range(CHECK_MAX_TIMES):
             try:
-                pyautogui.locateOnScreen(check_pic, confidence=IMG_CONFIDENCE)
+                pyautogui.locateOnScreen(
+                    check_full_path, confidence=IMG_CONFIDENCE)  # 改为 check_full_path
                 check_success = True
                 break
             except pyautogui.ImageNotFoundException:
@@ -374,6 +416,7 @@ def click_abs_with_check(x_abs: int, y_abs: int, check_pic: str):
 
         if check_success:
             break
+
 
 def press_key_with_check(key: str, check_pic: str):
     """
@@ -383,6 +426,8 @@ def press_key_with_check(key: str, check_pic: str):
     逻辑：按下指定按键 → 等待1秒 → 最多循环10次查找验证图
           找到则结束，未找到则重新执行整套流程
     """
+    check_full_path = resource_path(check_pic)  # 新增：验证图片路径转换
+
     while True:
         # 按下指定按键
         pydirectinput.press(key)
@@ -391,7 +436,8 @@ def press_key_with_check(key: str, check_pic: str):
         check_success = False
         for _ in range(CHECK_MAX_TIMES):
             try:
-                pyautogui.locateOnScreen(check_pic, confidence=IMG_CONFIDENCE)
+                pyautogui.locateOnScreen(
+                    check_full_path, confidence=IMG_CONFIDENCE)  # 改为 check_full_path
                 check_success = True
                 break
             except pyautogui.ImageNotFoundException:
@@ -410,6 +456,7 @@ def window_press_key_with_check(key: str, check_pic: str, hwnd: int = None):
     逻辑：按下指定按键 → 等待1秒 → 最多循环10次查找验证图
           找到则结束，未找到则重新执行整套流程
     """
+    check_full_path = resource_path(check_pic)  # 新增：验证图片路径转换
     region = get_window_region(hwnd) if hwnd is not None else None
 
     while True:
@@ -420,7 +467,7 @@ def window_press_key_with_check(key: str, check_pic: str, hwnd: int = None):
         for _ in range(CHECK_MAX_TIMES):
             try:
                 pyautogui.locateOnScreen(
-                    check_pic, confidence=IMG_CONFIDENCE, region=region)
+                    check_full_path, confidence=IMG_CONFIDENCE, region=region)  # 改为 check_full_path
                 check_success = True
                 break
             except pyautogui.ImageNotFoundException:
@@ -428,6 +475,7 @@ def window_press_key_with_check(key: str, check_pic: str, hwnd: int = None):
 
         if check_success:
             break
+
 
 def press_key_with_two_check(key: str, check_pic1: str, check_pic2: str):
     """
@@ -438,6 +486,9 @@ def press_key_with_two_check(key: str, check_pic1: str, check_pic2: str):
     逻辑：按下指定按键 → 等待1秒 → 最多循环10次查找验证图
           找到两张图任意一张则结束，都没找到则重新执行整套流程
     """
+    check_full_path1 = resource_path(check_pic1)  # 新增：验证图片1路径转换
+    check_full_path2 = resource_path(check_pic2)  # 新增：验证图片2路径转换
+
     while True:
         # 按下指定按键
         pydirectinput.press(key)
@@ -447,13 +498,14 @@ def press_key_with_two_check(key: str, check_pic1: str, check_pic2: str):
         for _ in range(CHECK_MAX_TIMES):
             try:
                 # 任意一张存在即验证通过
-                pyautogui.locateOnScreen(check_pic1, confidence=IMG_CONFIDENCE)
+                pyautogui.locateOnScreen(
+                    check_full_path1, confidence=IMG_CONFIDENCE)  # 改为 check_full_path1
                 check_success = True
                 break
             except pyautogui.ImageNotFoundException:
                 try:
                     pyautogui.locateOnScreen(
-                        check_pic2, confidence=IMG_CONFIDENCE)
+                        check_full_path2, confidence=IMG_CONFIDENCE)  # 改为 check_full_path2
                     check_success = True
                     break
                 except pyautogui.ImageNotFoundException:
@@ -469,8 +521,10 @@ def check_pic_exist(pic_path: str) -> int:
     :param pic_path: 图片路径
     :return: 存在返回1，不存在返回0
     """
+    full_path = resource_path(pic_path)  # 新增：路径转换
     try:
-        pyautogui.locateOnScreen(pic_path, confidence=IMG_CONFIDENCE)
+        pyautogui.locateOnScreen(
+            full_path, confidence=IMG_CONFIDENCE)  # 改为 full_path
         return 1
     except pyautogui.ImageNotFoundException:
         return 0
@@ -484,6 +538,7 @@ def check_pic_exist_in_times(pic_path: str, timeout: float = 0, hwnd: int = None
     :param hwnd:      窗口句柄，若为 None 则全屏查找，否则限定在该窗口区域
     :return:          存在返回 1，不存在（超时未出现）返回 0
     """
+    full_path = resource_path(pic_path)  # 新增：路径转换
     # 根据 hwnd 确定查找区域
     region = get_window_region(hwnd) if hwnd is not None else None
 
@@ -491,7 +546,7 @@ def check_pic_exist_in_times(pic_path: str, timeout: float = 0, hwnd: int = None
         # 仅检测一次（兼容原逻辑）
         try:
             pyautogui.locateOnScreen(
-                pic_path, confidence=IMG_CONFIDENCE, region=region)
+                full_path, confidence=IMG_CONFIDENCE, region=region)  # 改为 full_path
             return 1
         except pyautogui.ImageNotFoundException:
             return 0
@@ -500,7 +555,7 @@ def check_pic_exist_in_times(pic_path: str, timeout: float = 0, hwnd: int = None
     while time() - start_time < timeout:
         try:
             pyautogui.locateOnScreen(
-                pic_path, confidence=IMG_CONFIDENCE, region=region)
+                full_path, confidence=IMG_CONFIDENCE, region=region)  # 改为 full_path
             return 1   # 找到即返回
         except pyautogui.ImageNotFoundException:
             pass       # 未找到，继续循环

@@ -24,9 +24,7 @@ CHECK_INTERVAL = 1    # 验证图片查找间隔(秒)
 
 
 def run_task():
-    hwnd = function.get_target_window_hwnd("NIKKE")
-    function.force_foreground_window(hwnd)
-    win32gui.SetWindowPos(hwnd, -1, 0, 0, 0, 0, 0x0001)
+    function.click_pic(r"img\image.png")
     # 你后续所有业务代码，全部写在这个函数里
 
 # 给 main.py 调用的入口

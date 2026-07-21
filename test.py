@@ -20,6 +20,22 @@ MAX_RETRY = 30  # 不建议无限重试
 CHECK_MAX_TIMES = 10  # 验证图片最大重试次数
 CHECK_INTERVAL = 1    # 验证图片查找间隔(秒)
 
-hwnd = function.get_target_window_hwnd("NIKKE")
-function.force_foreground_window(hwnd)
-win32gui.SetWindowPos(hwnd, -1, 0, 0, 0, 0, 0x0001)
+# 【核心】把原有执行逻辑抽成独立函数，只写一次
+
+
+def run_task():
+    hwnd = function.get_target_window_hwnd("NIKKE")
+    function.force_foreground_window(hwnd)
+    win32gui.SetWindowPos(hwnd, -1, 0, 0, 0, 0, 0x0001)
+    # 你后续所有业务代码，全部写在这个函数里
+
+# 给 main.py 调用的入口
+
+
+def main(game_path=None, config_key=None):
+    run_task()  # 直接调用复用
+
+
+# 本地单独运行脚本时执行
+if __name__ == "__main__":
+    run_task()  # 同样调用复用

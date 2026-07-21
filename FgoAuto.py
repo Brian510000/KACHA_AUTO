@@ -6,7 +6,7 @@ import pyautogui
 import ctypes
 import pydirectinput
 from time import sleep
-from main import load_path
+from function import load_path, save_path
 # ========== 全局初始化（解决Windows缩放偏移） ==========
 ctypes.windll.user32.SetProcessDpiAwarenessContext(-4)
 pyautogui.PAUSE = 0.2  # 操作间隔，防操作过快
@@ -39,89 +39,101 @@ def launch_game(config_key, game_name):
     subprocess.Popen([path, "-v", "1"])
     print(f"已启动：{path}")
 
+def fgo():
+    launch_game("fgo", "FGO")
 
-launch_game("fgo", "FGO")
-
-hwnd = function.get_target_window_hwnd("安卓设备")
-
-
-function.force_foreground_window(hwnd)
-
-sleep(10)
-
-if function.check_pic_exist_in_times(r"fgo_img\1.png", 7, hwnd):
-    function.window_click_pic(r"fgo_img\1.png", hwnd)
-
-sleep(1)
-
-# 点击2，并且验证3，过2秒
-function.window_pic_operate_with_check(
-    r"fgo_img\2.png", r"fgo_img\3.png", hwnd)
-sleep(2)
-
-# 点击3，并且验证4，过2秒
-function.window_pic_operate_with_check(
-    r"fgo_img\3.png", r"fgo_img\4.png", hwnd)
-sleep(2)
-# 点击4，过3秒
-function.window_click_pic(r"fgo_img\4.png", hwnd)
-sleep(4)
-
-# 点击0并验证5，过一秒
-function.window_pic_operate_with_check(
-    r"fgo_img\0.png", r"fgo_img\5.png", hwnd)
+    hwnd = function.get_target_window_hwnd("安卓设备")
 
 
-# 点击5并验证6，过一秒
-function.window_pic_operate_with_check(
-    r"fgo_img\5.png", r"fgo_img\6.png", hwnd)
+    function.force_foreground_window(hwnd)
 
+    sleep(10)
 
-# 点击6并验证7，过一秒
-function.window_pic_operate_with_check(
-    r"fgo_img\6.png", r"fgo_img\7.png", hwnd)
+    if function.check_pic_exist_in_times(r"fgo_img\1.png", 7, hwnd):
+        function.window_click_pic(r"fgo_img\1.png", hwnd)
 
-
-# 点击0并验证8，过一秒
-function.window_pic_operate_with_check(
-    r"fgo_img\0.png", r"fgo_img\8.png", hwnd)
-
-
-# 点击8过10秒
-function.window_click_pic(r"fgo_img\8.png", hwnd)
-sleep(8)
-
-function.window_pic_operate_with_check(
-    r"fgo_img\9.png", r"fgo_img\10.png", hwnd)
-
-
-sleep(2)
-
-# 点击10
-function.window_click_pic(r"fgo_img\10.png", hwnd)
-
-sleep(20)
-# 一直寻找并点击11（可能有很多个）
-while function.check_pic_exist_in_times(r"fgo_img\11.png", 3, hwnd):
-    function.window_click_pic(r"fgo_img\11.png", hwnd)
     sleep(1)
 
-# 点击13并验证14
-function.window_pic_operate_with_check(
-    r"fgo_img\13.png", r"fgo_img\14.png", hwnd)
+    # 点击2，并且验证3，过2秒
+    function.window_pic_operate_with_check(
+        r"fgo_img\2.png", r"fgo_img\3.png", hwnd)
+    sleep(2)
 
-# 点击14并验证15，过一秒
-function.window_pic_operate_with_check(
-    r"fgo_img\14.png", r"fgo_img\15.png", hwnd)
-sleep(1)
-# 点击15并验证16，过一秒
-function.window_pic_operate_with_check(
-    r"fgo_img\15.png", r"fgo_img\16.png", hwnd)
-sleep(1)
-# 点击17，过一秒
-function.window_click_pic(r"fgo_img\17.png", hwnd)
-sleep(1)
-if function.check_pic_exist_in_times(r"fgo_img\18.png", 1, hwnd):
-    function.window_click_pic(r"fgo_img\18.png", hwnd)
-# 点击19
-function.window_click_pic(r"fgo_img\19.png", hwnd)
+    # 点击3，并且验证4，过2秒
+    function.window_pic_operate_with_check(
+        r"fgo_img\3.png", r"fgo_img\4.png", hwnd)
+    sleep(2)
+    # 点击4，过3秒
+    function.window_click_pic(r"fgo_img\4.png", hwnd)
+    sleep(4)
+
+    # 点击0并验证5，过一秒
+    function.window_pic_operate_with_check(
+        r"fgo_img\0.png", r"fgo_img\5.png", hwnd)
+
+
+    # 点击5并验证6，过一秒
+    function.window_pic_operate_with_check(
+        r"fgo_img\5.png", r"fgo_img\6.png", hwnd)
+
+
+    # 点击6并验证7，过一秒
+    function.window_pic_operate_with_check(
+        r"fgo_img\6.png", r"fgo_img\7.png", hwnd)
+
+
+    # 点击0并验证8，过一秒
+    function.window_pic_operate_with_check(
+        r"fgo_img\0.png", r"fgo_img\8.png", hwnd)
+
+
+    # 点击8过10秒
+    function.window_click_pic(r"fgo_img\8.png", hwnd)
+    sleep(8)
+
+    function.window_pic_operate_with_check(
+        r"fgo_img\9.png", r"fgo_img\10.png", hwnd)
+
+
+    sleep(2)
+
+    # 点击10
+    function.window_click_pic(r"fgo_img\10.png", hwnd)
+
+    sleep(20)
+    # 一直寻找并点击11（可能有很多个）
+    while function.check_pic_exist_in_times(r"fgo_img\11.png", 3, hwnd):
+        function.window_click_pic(r"fgo_img\11.png", hwnd)
+        sleep(1)
+
+    # 点击13并验证14
+    function.window_pic_operate_with_check(
+        r"fgo_img\13.png", r"fgo_img\14.png", hwnd)
+
+    # 点击14并验证15，过一秒
+    function.window_pic_operate_with_check(
+        r"fgo_img\14.png", r"fgo_img\15.png", hwnd)
+    sleep(1)
+    # 点击15并验证16，过一秒
+    function.window_pic_operate_with_check(
+        r"fgo_img\15.png", r"fgo_img\16.png", hwnd)
+    sleep(1)
+    # 点击17，过一秒
+    function.window_click_pic(r"fgo_img\17.png", hwnd)
+    sleep(1)
+    if function.check_pic_exist_in_times(r"fgo_img\18.png", 1, hwnd):
+        function.window_click_pic(r"fgo_img\18.png", hwnd)
+    # 点击19
+    function.window_click_pic(r"fgo_img\19.png", hwnd)
+
+
+# 给 main.py 调用的入口
+
+
+def main(game_path=None, config_key=None):
+    fgo()  # 直接调用复用
+
+
+# 本地单独运行脚本时执行
+if __name__ == "__main__":
+    fgo()  # 同样调用复用

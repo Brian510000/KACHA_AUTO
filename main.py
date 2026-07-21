@@ -2,9 +2,11 @@ import tkinter as tk
 from tkinter import simpledialog, messagebox
 import share
 import subprocess
-import os
-import sys
-import json
+from function import load_path, save_path
+import NikkeAuto
+import ArkAuto
+import FgoAuto
+import NteAuto
 # ========== 配色 ==========
 COLORS = {
     "bg": "#F7F6F3",
@@ -15,48 +17,15 @@ COLORS = {
     "text_secondary": "#8A9099",
 }
 
-CONFIG_FILE = os.path.join(os.path.expanduser("~"), ".game_paths.json")
 
 
-def load_path(key: str) -> str:
-    if not os.path.exists(CONFIG_FILE):
-        return ""
-    try:
-        with open(CONFIG_FILE, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        raw = data.get(key, "")
-        # 去除首尾的双引号或单引号
-        if raw.startswith('"') and raw.endswith('"'):
-            raw = raw[1:-1]
-        elif raw.startswith("'") and raw.endswith("'"):
-            raw = raw[1:-1]
-        return raw
-    except:
-        return ""
 
 
-def save_path(key: str, path: str) -> bool:
-    """保存指定键的路径到配置文件，返回是否成功"""
-    try:
-        # 先读取现有数据
-        if os.path.exists(CONFIG_FILE):
-            with open(CONFIG_FILE, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        else:
-            data = {}
-        # 更新键值
-        data[key] = path
-        # 写回
-        with open(CONFIG_FILE, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-        return True
-    except:
-        return False
         
 
-def _run_generic(config_key: str, game_name: str, script_name: str):
-    """通用运行函数：加载/设置路径，并启动指定的脚本"""
-    # 1. 加载已有配置
+def _run_generic(config_key: str, game_name: str, script_mod):
+    """通用运行函数：加载/设置路径，并启动指定的脚本模块"""
+    # 1. 加载已有配置（这一大段完全保留，一字不改）
     saved_path = load_path(config_key)
 
     if saved_path:
@@ -80,25 +49,11 @@ def _run_generic(config_key: str, game_name: str, script_name: str):
             messagebox.showerror("保存失败", "无法写入配置文件，请检查权限")
             return
 
-
-
-    # 3. 运行指定脚本
+    # 2. 直接调用模块入口，替代 subprocess（不会循环）
     try:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        target_script = os.path.join(script_dir, script_name)
-        if not os.path.exists(target_script):
-            messagebox.showerror("错误", f"未找到脚本：{target_script}")
-            return
-
-        # 使用 subprocess.run 捕获错误（调试用）
-        proc = subprocess.Popen(
-            [sys.executable, target_script, path, config_key],
-            cwd=script_dir,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-        )
-        print(f"已启动 {game_name} 脚本 (PID: {proc.pid})")
-
+        # 调用子脚本里我们新增的 main 函数
+        script_mod.main(path, config_key)
+        print(f"已启动 {game_name} 脚本")
     except Exception as e:
         messagebox.showerror("启动失败", str(e))
 
@@ -145,12 +100,12 @@ class MinimalApp:
     # ========== ↓↓↓ 在这里写你的功能函数 ↓↓↓ ==========
 
     def run_zhongmodi(self):
-        _run_generic("zhongmodi", "终末地", "ArkAuto.py")
+        _run_generic("zhongmodi", "终末地", ArkAuto)
 
 
     def run_yihuan(self):
         """异环脚本：加载或设置路径，并运行 test.py"""
-        _run_generic("yihuan", "异环", "NteAuto.py")   # 指定脚本
+        _run_generic("yihuan", "异环", NteAuto)   # 指定脚本
 
     def run_mingchao(self):
         """鸣潮脚本"""
@@ -158,7 +113,7 @@ class MinimalApp:
 
     def run_fgo(self):
         """FGO脚本"""
-        _run_generic("fgo", "FGO", "FgoAuto.py")   # 指定脚本
+        _run_generic("fgo", "FGO", FgoAuto)   # 指定脚本
 
     def run_nongshijie(self):
         """农世界脚本"""
@@ -166,7 +121,7 @@ class MinimalApp:
 
     def run_nikke(self):
         """NIKKE脚本"""
-        _run_generic("nikke", "NIKKE", "NikkeAuto.py")
+        _run_generic("nikke", "NIKKE", NikkeAuto)
 
     # ========== ↑↑↑ 功能函数写这里 ↑↑↑ ==========
 

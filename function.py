@@ -7,7 +7,9 @@ from pyautogui import locateOnScreen, ImageNotFoundException, moveTo, click, mov
 from time import sleep,time
 from retry import retry
 import win32process
-
+import os
+import sys
+import json
 
 
 # ========== 全局初始化（解决Windows缩放偏移） ==========
@@ -20,6 +22,43 @@ RETRY_DELAY = 1
 MAX_RETRY = 30  # 不建议无限重试
 CHECK_MAX_TIMES = 10  # 验证图片最大重试次数
 CHECK_INTERVAL = 1    # 验证图片查找间隔(秒)
+
+CONFIG_FILE = os.path.join(os.path.expanduser("~"), ".game_paths.json")
+
+def load_path(key: str) -> str:
+    if not os.path.exists(CONFIG_FILE):
+        return ""
+    try:
+        with open(CONFIG_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        raw = data.get(key, "")
+        # 去除首尾的双引号或单引号
+        if raw.startswith('"') and raw.endswith('"'):
+            raw = raw[1:-1]
+        elif raw.startswith("'") and raw.endswith("'"):
+            raw = raw[1:-1]
+        return raw
+    except:
+        return ""
+
+
+def save_path(key: str, path: str) -> bool:
+    """保存指定键的路径到配置文件，返回是否成功"""
+    try:
+        # 先读取现有数据
+        if os.path.exists(CONFIG_FILE):
+            with open(CONFIG_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        else:
+            data = {}
+        # 更新键值
+        data[key] = path
+        # 写回
+        with open(CONFIG_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        return True
+    except:
+        return False
 # ========== 窗口工具 ==========
 
 

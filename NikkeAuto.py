@@ -83,10 +83,15 @@ function.force_foreground_window(hwnd)
 # 语法：SetWindowPos(句柄, 置顶层级, x, y, 宽度, 高度, 标志位)
 # SWP_NOSIZE = 0x0001 保持原有宽高，不修改尺寸
 win32gui.SetWindowPos(hwnd, 0, 0, 0, 0, 0, 0x0001)
+# 这里等待登录，正式进入启动器
+sleep(10)
+hwnd = function.get_target_window_hwnd("NIKKE")
+function.force_foreground_window(hwnd)
+win32gui.SetWindowPos(hwnd, 0, 0, 0, 0, 0, 0x0001)
 
 # 先点击绝对坐标292，1202，等10秒，然后循环找句柄来置顶nikke
 pydirectinput.click(292,1202)
-sleep(10)
+sleep(15)
 
 hwnd = function.get_target_window_hwnd("NIKKE")
 function.force_foreground_window(hwnd)
@@ -166,8 +171,9 @@ while True:
 # 点击绝对坐标（前哨基地）789，1118并验证11，等待1s
 function.click_abs_with_check(789, 1118, r"Nikke_img/11.png")
 sleep(1)
-# 点击11并验证12，等待1s
-function.pic_operate_with_check_with_success_sleep(r"Nikke_img/11.png", r"Nikke_img/12.png", 1.0)
+# 点击11并验证12，等待1s(这里点击11并不能进入，感觉还是点绝对坐标吧)1335，1355
+function.click_abs_with_check(1335, 1355, r"Nikke_img/12.png")
+sleep(1)
 # 点击12并验证13，等待1s
 function.pic_operate_with_check_with_success_sleep(r"Nikke_img/12.png", r"Nikke_img/13.png", 1.0)
 # 点击13并验证14，等待1s
@@ -193,27 +199,38 @@ function.pic_operate_with_check_with_success_sleep(r"Nikke_img/18.png", r"Nikke_
 function.pic_operate_with_check_with_success_sleep(r"Nikke_img/19.png", r"Nikke_img/20.png", 1.0)
 # 点击20并验证21，等待1s
 function.pic_operate_with_check_with_success_sleep(r"Nikke_img/20.png", r"Nikke_img/21.png", 1.0)
-# 点击21的绝对坐标并验证22，等待1s
-
+# 点击21并验证23，等待1s
+function.pic_operate_with_check_with_success_sleep(r"Nikke_img/21.png", r"Nikke_img/23.png", 1.0)
 # 点击23并验证11，等待1s
-
+function.pic_operate_with_check_with_success_sleep(r"Nikke_img/23.png", r"Nikke_img/11.png", 1.0)
 # 点击24并验证25，等待1s
-
+function.pic_operate_with_check_with_success_sleep(r"Nikke_img/24.png", r"Nikke_img/25.png", 1.0)
 # 点击25并验证26，等待1s
+function.pic_operate_with_check_with_success_sleep(r"Nikke_img/25.png", r"Nikke_img/26.png", 1.0)
+
 
 # 点击26并验证27，等待1s
+function.pic_operate_with_check_with_success_sleep(r"Nikke_img/26.png", r"Nikke_img/27.png", 1.0)
+
+
+
 
 # 点击绝对坐标1278，850并验证28，等1s
-
+function.click_abs_with_check(1278, 850, r"Nikke_img/28.png")
+sleep(1)
 # 点击28并验证29，等待1s
-
+function.pic_operate_with_check_with_success_sleep(r"Nikke_img/28.png", r"Nikke_img/29.png", 1.0)
 # 点击29并验证27，等待1s
-
+function.pic_operate_with_check_with_success_sleep(r"Nikke_img/29.png", r"Nikke_img/27.png", 1.0)
 # 按下esc并验证30，等待0.5s
-
+function.press_key_with_check('esc', r"Nikke_img/30.png")
+sleep(0.5)
 # 点击30并验证31，等待1s
-
+function.pic_operate_with_check_with_success_sleep(r"Nikke_img/30.png", r"Nikke_img/31.png", 1.0)
 # 点击绝对坐标1280，1170并验证32，等待1s
+function.click_abs_with_check(1280, 1170, r"Nikke_img/32.png")
+sleep(1)
+
 
 # 点击32的绝对坐标1492，1214，一直点击直到验证33
 

@@ -60,12 +60,12 @@ function.pic_click_abs_with_check(
 
 sleep(5)
 
-# 点击图片1 验证 2
-function.pic_operate_with_check(r"nte_img\1.png", r"nte_img\2.png")
-# 过一秒按下esc,过两秒
-sleep(1)
-pydirectinput.press('esc')
-sleep(2)
+# # 点击图片1 验证 2
+# function.pic_operate_with_check(r"nte_img\1.png", r"nte_img\2.png")
+# # 过一秒按下esc,过两秒
+# sleep(1)
+# pydirectinput.press('esc')
+# sleep(2)
 
 # 按下b验证5 过一秒
 function.press_key_with_check('b', r"nte_img\5.png")

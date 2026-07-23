@@ -256,6 +256,43 @@ def pic_operate_with_check_with_success_sleep(main_pic: str, check_pic: str, suc
             break
 
 
+def nikke_spec1_pic_operate_with_check_with_success_sleep(main_pic: str, check_pic: str, success_sleep: float = 1.0):
+    """
+    核心逻辑：
+    1. 找到主图片并点击中心
+    2. 等待1秒，循环10次查找验证图片
+    3. 找到验证图片则结束；10次未找到，重新执行整个流程
+    4. 验证成功后，额外等待指定时长
+
+    :param main_pic: 要点击的主图片路径
+    :param check_pic: 用于验证的图片路径
+    :param success_sleep: 验证成功后等待的秒数，默认 1.0
+    """
+    check_full_path = resource_path(check_pic)  # 新增：路径转换
+    while True:
+        # 第一步：查找并点击主图片
+        click_pic(main_pic)   # click_pic 内部已调用 resource_path
+        # 等待1秒
+        sleep(10)
+
+        # 第二步：循环查找验证图片，最多10次
+        check_success = False
+        for _ in range(CHECK_MAX_TIMES):
+            try:
+                pyautogui.locateOnScreen(
+                    check_full_path, confidence=IMG_CONFIDENCE)  # 改为 check_full_path
+                check_success = True
+                break
+            except pyautogui.ImageNotFoundException:
+                sleep(CHECK_INTERVAL)
+
+        # 验证成功，退出循环；失败则继续外层大循环
+        if check_success:
+            print(f"验证图片找到，操作成功！")
+            # 新增：验证成功后等待指定时间
+            sleep(success_sleep)
+            break
+
 def window_pic_operate_with_check(main_pic: str, check_pic: str, hwnd: int = None):
     """
     核心逻辑：

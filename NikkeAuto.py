@@ -144,11 +144,11 @@ def nikke():
     sleep(1)
 
     # 点击5并验证8，等待1s
-    function.pic_operate_with_check(r"Nikke_img/5.png", r"Nikke_img/8.png")
+    function.pic_operate_with_check(r"Nikke_img/5.png", r"Nikke_img/8_1.png")
     sleep(1)
 
     # 点击8并验证6，等待1s
-    function.pic_operate_with_check_with_success_sleep(r"Nikke_img/8.png", r"Nikke_img/6.png", 1.0)
+    function.pic_operate_with_check_with_success_sleep(r"Nikke_img/8_1.png", r"Nikke_img/6.png", 1.0)
 
 
     # 点击6并验证9，等待1s（这里感觉7和9并不太一样）
@@ -228,12 +228,20 @@ def nikke():
     sleep(0.5)
     # 点击30并验证31，等待1s
     function.pic_operate_with_check_with_success_sleep(r"Nikke_img/30.png", r"Nikke_img/31.png", 1.0)
-    # 点击绝对坐标1280，1170并验证32，等待1s
-    function.click_abs_with_check(1280, 1170, r"Nikke_img/32.png")
+    # 点击绝对坐标1280，1170并验证31.5，等待1s
+    function.click_abs_with_check(1280, 1170, r"Nikke_img/31_5.png")
     sleep(1)
 
-
-    # 点击32的绝对坐标1492，1214，一直点击直到验证33
+    # 如果五秒内存在32，那么就一直点击32的绝对位置，直到存在33
+    if function.check_pic_exist_in_times(r"Nikke_img\32.png", 5):
+        while True:
+            pydirectinput.click(1482, 1222)
+            sleep(0.5)  # 间隔1秒
+            if function.check_pic_exist(r"Nikke_img\33.png"):
+                break
+    # 没有则点击进入战斗的绝对位置
+    else:
+        pydirectinput.click(1467, 1327)
 
     # 一直按esc直到验证34
 
@@ -242,30 +250,43 @@ def nikke():
     # 点击35并验证36，等待1s
 
     # 点击36并验证34，等待1s
+    # 上面这一段打算废弃，因为不稳定
+
 
     # 一直按esc直到验证1
     # 按下esc，等待0.5s
-
+    while True:
+        pydirectinput.press('esc')
+        sleep(0.5)
+        if function.check_pic_exist(r"Nikke_img/1.png"):
+            # 按下esc，等待1s
+            pydirectinput.press('esc')
+            sleep(1)
+            break
     # 点击绝对坐标1570，1318并验证37，等待1s
-
+    function.click_abs_with_check(1570, 1318, r"Nikke_img/37.png")
+    sleep(1)
     # 点击37并验证38，等待1s
-
-    # 点击38，这里需要等久一点，然后验证39
-
+    function.pic_operate_with_check_with_success_sleep(r"Nikke_img/37.png", r"Nikke_img/38.png", 1.0)  # 等待1秒
+    # 点击38，这里需要等久一点,使用特殊函数，然后验证39
+    function.nikke_spec1_pic_operate_with_check_with_success_sleep(r"Nikke_img/38.png", r"Nikke_img/39.png", 1.0)  # 等待1秒
+    
     # 点击39并验证40，等待1s
-
-    # 点击40，等待1s
-
+    function.pic_operate_with_check_with_success_sleep(r"Nikke_img/39.png", r"Nikke_img/40.png", 1.0)  # 等待1秒
+    # 点击40并验证37，等待1s
+    function.pic_operate_with_check_with_success_sleep(r"Nikke_img/40.png", r"Nikke_img/37.png", 1.0)  # 等待1秒
     # 按下esc并验证24，等待0.5s
-
+    function.press_key_with_check('esc', r"Nikke_img/24.png")
+    sleep(0.5)
     # 点击24并验证25，等待1s
-
+    function.pic_operate_with_check_with_success_sleep(r"Nikke_img/24.png", r"Nikke_img/25.png", 1.0)  # 等待1s
     # 点击25并验证41，等待1s
-
+    function.pic_operate_with_check_with_success_sleep(r"Nikke_img/25.png", r"Nikke_img/41.png", 1.0)  # 等待1s
     # 点击绝对坐标1280，927，并验证25，等待1s
-
+    function.click_abs_with_check(1280, 927, r"Nikke_img/25.png")
+    sleep(1)
     # 点击25
-
+    function.click_pic(r"Nikke_img/25.png")
 # 给 main.py 调用的入口
 
 

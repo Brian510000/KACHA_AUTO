@@ -58,7 +58,7 @@ def ark():
     sleep(5)
 
     # 点击3
-    # function.click_pic(r"ark_img\3.png")
+    function.click_pic(r"ark_img\3.png")
 
     # 然后为了确保在主页面，一直点击esc，直到验证5，过1秒
     while True:

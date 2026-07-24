@@ -54,6 +54,28 @@ def fgo():
 
     sleep(1)
 
+    function.window_pic_operate_with_check(
+        r"fgo_img\5.png", r"fgo_img\6.png", hwnd)
+    sleep(15)
+    function.window_pic_operate_with_check(
+        r"fgo_img\6.png", r"fgo_img\6_1.png", hwnd)
+    sleep(1)
+    function.window_pic_operate_with_check(
+        r"fgo_img\6_1.png", r"fgo_img\6_2.png", hwnd)
+    sleep(1)
+    function.window_pic_operate_with_check(
+        r"fgo_img\6_2.png", r"fgo_img\6_3.png", hwnd)
+    sleep(1)
+    function.window_pic_operate_with_check(
+        r"fgo_img\6_3.png", r"fgo_img\6_4.png", hwnd)
+    sleep(1)
+    function.window_pic_operate_with_check(
+        r"fgo_img\6_4.png", r"fgo_img\6_5.png", hwnd)
+    sleep(1)
+    # 点击0并验证5，过一秒
+    function.window_pic_operate_with_check(
+        r"fgo_img\0.png", r"fgo_img\5.png", hwnd)
+
     # 点击2，并且验证3，过2秒
     function.window_pic_operate_with_check(
         r"fgo_img\2.png", r"fgo_img\3.png", hwnd)
@@ -70,22 +92,6 @@ def fgo():
     # 点击0并验证5，过一秒
     function.window_pic_operate_with_check(
         r"fgo_img\0.png", r"fgo_img\5.png", hwnd)
-
-
-    # 点击5并验证6，过一秒
-    function.window_pic_operate_with_check(
-        r"fgo_img\5.png", r"fgo_img\6.png", hwnd)
-
-
-    # 点击6并验证7，过一秒
-    function.window_pic_operate_with_check(
-        r"fgo_img\6.png", r"fgo_img\7.png", hwnd)
-
-
-    # 点击0并验证8，过一秒
-    function.window_pic_operate_with_check(
-        r"fgo_img\0.png", r"fgo_img\8.png", hwnd)
-
 
     # 点击8过10秒
     function.window_click_pic(r"fgo_img\8.png", hwnd)

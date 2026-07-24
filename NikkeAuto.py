@@ -105,7 +105,7 @@ def nikke():
             pydirectinput.click(292,1201)
             break
     # 等待1秒
-    sleep(1)
+    sleep(3)
     # 点击2并验证3，等待一秒
     function.pic_operate_with_check(r"Nikke_img/2.png", r"Nikke_img/3.png")
     sleep(1)

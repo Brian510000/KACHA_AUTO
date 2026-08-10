@@ -55,19 +55,18 @@ def nte():
     function.force_foreground_window(hwnd)
 
 
-    function.pic_click_abs_with_check(
-        r"nte_img\imagecopy.png", 1270, 1240, r"nte_img\imagecopy 2.png")
+    function.pic_click_abs_with_check(r"nte_img\42.png", 1270, 1240, r"nte_img\imagecopy2.png")
 
     sleep(5)
 
-    '''
+    # '''
     # 点击图片1 验证 2
     function.pic_operate_with_check(r"nte_img\1.png", r"nte_img\2.png")
     # 过一秒按下esc,过两秒
     sleep(1)
     pydirectinput.press('esc')
     sleep(2)
-    '''
+    # '''
     # 按下b验证5 过一秒
     function.press_key_with_check('b', r"nte_img\5.png")
     sleep(1)
@@ -174,8 +173,8 @@ def nte():
     function.click_pic(r"nte_img\4.png")
     sleep(2)
 
-    # 点击32并验证33过一秒
-    function.pic_operate_with_check(r"nte_img\32.png", r"nte_img\33.png")
+    # 点击32的绝对坐标2230，1104并验证33过一秒
+    function.click_abs_with_check(2230,1104, r"nte_img\33.png")
     sleep(1)
 
     # 点击33并验证34过一秒

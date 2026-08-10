@@ -100,12 +100,12 @@ def nikke():
     # 然后一直点绝对坐标292,1201，直到验证图片2
     while True:
         pydirectinput.click(292,1201)
-        sleep(1)
+        sleep(3)
         if function.check_pic_exist(r"Nikke_img/2.png"):
             pydirectinput.click(292,1201)
             break
     # 等待1秒
-    sleep(3)
+    sleep(1)
     # 点击2并验证3，等待一秒
     function.pic_operate_with_check(r"Nikke_img/2.png", r"Nikke_img/3.png")
     sleep(1)
@@ -232,7 +232,7 @@ def nikke():
     function.click_abs_with_check(1280, 1170, r"Nikke_img/31_5.png")
     sleep(1)
 
-    # 如果五秒内存在32，那么就一直点击32的绝对位置，直到存在33
+    # 如果五秒内存在32，那么就一直点击32的绝对位置，直到存在33 这里32需要更准确的图片
     if function.check_pic_exist_in_times(r"Nikke_img\32.png", 5):
         while True:
             pydirectinput.click(1482, 1222)

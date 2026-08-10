@@ -29,10 +29,65 @@ def run_task():
 
     function.force_foreground_window(hwnd)
 
-    function.pic_click_abs_with_check(
-        r"nte_img\imagecopy.png", 1270, 1240, r"nte_img\imagecopy 2.png")
+# 点击32并验证33过一秒
+    function.pic_operate_with_check(r"nte_img\43.png", r"nte_img\33.png")
+    sleep(1)
 
+    # 点击33并验证34过一秒
+    function.pic_operate_with_check(r"nte_img\33.png", r"nte_img\34.png")
+    sleep(1)
 
+    # esc过一秒
+    pydirectinput.press('esc')
+    sleep(1)
+
+    # esc过一秒并验证图片3
+    function.press_key_with_check('esc', r"nte_img\3.png")
+    sleep(1)
+    # 点击35并验证36 过2秒
+    function.pic_operate_with_check(r"nte_img\35.png", r"nte_img\36.png")
+    sleep(2)
+
+    # 点击910,318并验证2 过一秒
+    function.click_abs_with_check(910, 318, r"nte_img\2.png")
+    sleep(1)
+
+    # 按下esc过一秒
+    pydirectinput.press('esc')
+    sleep(1)
+
+    # 按下esc并验证 19或20其一 过一秒
+    function.press_key_with_two_check(
+        'esc', r"nte_img\19.png", r"nte_img\20.png")
+    sleep(1)
+
+    # 按下f2验证37过一秒
+    function.press_key_with_check('f2', r"nte_img\37.png")
+    sleep(1)
+
+    # 点击38并验证35 过一秒
+    function.pic_operate_with_check(r"nte_img\38.png", r"nte_img\35.png")
+    sleep(1)
+
+    # 点击39过1秒
+    function.click_pic(r"nte_img\39.png")
+    sleep(1)
+
+    # 点击40验证41过一
+    function.pic_operate_with_check(r"nte_img\40.png", r"nte_img\41.png")
+    sleep(1)
+
+    # 点击41过一
+    function.click_pic(r"nte_img\41.png")
+    sleep(1)
+
+    # esc过一
+    pydirectinput.press('esc')
+    sleep(1)
+
+    # esc验证19/20
+    function.press_key_with_two_check(
+        'esc', r"nte_img\19.png", r"nte_img\20.png")
 
 
 

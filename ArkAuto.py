@@ -52,7 +52,7 @@ def ark():
 
     sleep(50)
 
-
+    print("开始点击1")
     # 点击1并验证2，过5秒
     function.pic_operate_with_check(r"ark_img\1.png", r"ark_img\2.png")
     sleep(5)
@@ -155,7 +155,7 @@ def ark():
     sleep(0.5)
 
     # 点击绝对坐标250，1050并验证16，过1秒
-    function.click_abs_with_check(250, 1050, r"ark_img\16.png")
+    function.click_abs_with_check(1205, 1050, r"ark_img\16.png")
     sleep(1)
 
 
